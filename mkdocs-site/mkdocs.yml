@@ -1,0 +1,106 @@
+site_name: ML Algorithm Handbook
+site_description: Comprehensive ML, NLP and GenAI algorithm handbook - intuition, math, worked examples, code
+docs_dir: ..
+site_dir: ../../_handbook_site
+exclude_docs: |
+  .git/
+  .gitignore
+  mkdocs-site/
+  notebooks/_build.py
+theme:
+  name: material
+  features: [navigation.sections, navigation.top, navigation.indexes, search.suggest, content.code.copy]
+  palette:
+    - scheme: default
+      toggle: {icon: material/weather-night, name: Dark mode}
+    - scheme: slate
+      toggle: {icon: material/weather-sunny, name: Light mode}
+markdown_extensions:
+  - tables
+  - toc: {permalink: true}
+  - pymdownx.arithmatex: {generic: true}
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - attr_list
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+nav:
+  - Home: README.md
+  - Chapter template: TEMPLATE.md
+  - Code index: code/README.md
+  - 0 Foundations:
+    - 00-foundations/01-math-essentials.md
+    - 00-foundations/02-probability-mle-map.md
+    - 00-foundations/03-optimization.md
+    - 00-foundations/04-bias-variance-regularization.md
+    - 00-foundations/05-evaluation.md
+    - 00-foundations/06-feature-engineering.md
+  - 1 Regression:
+    - 01-regression/01-linear-regression.md
+    - 01-regression/02-polynomial-regression.md
+    - 01-regression/03-ridge-lasso-elasticnet.md
+    - 01-regression/04-quantile-bayesian-regression.md
+  - 2 Classification:
+    - 02-classification/01-logistic-regression.md
+    - 02-classification/02-perceptron.md
+    - 02-classification/03-naive-bayes.md
+    - 02-classification/04-lda-qda.md
+    - 02-classification/05-knn.md
+    - 02-classification/06-svm.md
+  - 3 Trees and ensembles:
+    - 03-trees-and-ensembles/01-decision-trees.md
+    - 03-trees-and-ensembles/02-bagging-random-forest.md
+    - 03-trees-and-ensembles/03-adaboost-gradient-boosting.md
+    - 03-trees-and-ensembles/04-xgboost-lightgbm-catboost.md
+    - 03-trees-and-ensembles/05-gmm-hmm-bayesnet.md
+  - 4 Unsupervised:
+    - 04-unsupervised-learning/01-kmeans.md
+    - 04-unsupervised-learning/02-other-clustering.md
+    - 04-unsupervised-learning/03-pca-family.md
+    - 04-unsupervised-learning/04-tsne-umap.md
+    - 04-unsupervised-learning/05-anomaly-detection.md
+    - 04-unsupervised-learning/06-association-rules.md
+    - 04-unsupervised-learning/07-feature-selection.md
+  - 5 Deep learning:
+    - 05-deep-learning/01-mlp-backprop.md
+    - 05-deep-learning/02-cnn-lineage.md
+    - 05-deep-learning/03-sequence-models.md
+    - 05-deep-learning/04-attention-transformers.md
+    - 05-deep-learning/05-generative-ae-vae-gan.md
+    - 05-deep-learning/06-gnn.md
+    - 05-deep-learning/07-self-supervised.md
+  - 6 Specialized ML:
+    - 06-specialized-ml/01-time-series.md
+    - 06-specialized-ml/02-recommender-systems.md
+    - 06-specialized-ml/03-reinforcement-learning.md
+    - 06-specialized-ml/04-causal-inference.md
+    - 06-specialized-ml/05-survival-analysis.md
+    - 06-specialized-ml/06-semi-weak-supervised.md
+  - 7 Comparisons: 07-comparisons/README.md
+  - 8 Projects: 08-projects/01-end-to-end-tabular-project.md
+  - 9 NLP:
+    - 09-nlp/README.md
+    - 09-nlp/01-text-preprocessing-tokenization.md
+    - 09-nlp/02-text-representation.md
+    - 09-nlp/03-text-classification-sentiment.md
+    - 09-nlp/04-language-models-ngram.md
+    - 09-nlp/05-word-embeddings.md
+    - 09-nlp/06-topic-modeling.md
+    - 09-nlp/07-sequence-labeling-ner-pos.md
+    - 09-nlp/08-pretrained-transformers-for-nlp.md
+    - 09-nlp/09-seq2seq-mt-summarization-qa.md
+    - 09-nlp/10-nlp-evaluation-practice.md
+  - 10 GenAI and LLMs:
+    - 10-genai-and-llms/README.md
+    - 10-genai-and-llms/01-generative-vs-discriminative.md
+    - 10-genai-and-llms/02-language-models-llms.md
+    - 10-genai-and-llms/03-prompt-engineering.md
+    - 10-genai-and-llms/04-rag.md
+    - 10-genai-and-llms/05-efficient-adaptation.md
+    - 10-genai-and-llms/06-alignment-rlhf-dpo.md
+    - 10-genai-and-llms/07-diffusion-models.md
+    - 10-genai-and-llms/08-multimodal.md
+    - 10-genai-and-llms/09-tool-calling.md
+    - 10-genai-and-llms/10-agents-agentic-ai.md
+    - 10-genai-and-llms/11-evaluation-safety-llmops.md
