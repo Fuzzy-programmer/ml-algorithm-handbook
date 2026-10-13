@@ -1,0 +1,3478 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Comprehensive ML, NLP and GenAI algorithm handbook - intuition, math, worked examples, code">
+      
+      
+      
+      
+        <link rel="prev" href="../06-topic-modeling/">
+      
+      
+        <link rel="next" href="../08-pretrained-transformers-for-nlp/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Chapter N.7 — Sequence Labeling: POS Tagging, NER, Chunking (HMM → CRF → Neural), plus Parsing & Information Extraction - ML Algorithm Handbook</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#chapter-n7-sequence-labeling-pos-tagging-ner-chunking-hmm-crf-neural-plus-parsing-information-extraction" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="ML Algorithm Handbook" class="md-header__button md-logo" aria-label="ML Algorithm Handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ML Algorithm Handbook
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Chapter N.7 — Sequence Labeling: POS Tagging, NER, Chunking (HMM → CRF → Neural), plus Parsing &amp; Information Extraction
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="ML Algorithm Handbook" class="md-nav__button md-logo" aria-label="ML Algorithm Handbook" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    ML Algorithm Handbook
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../TEMPLATE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../code/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code index
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0 Foundations
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    0 Foundations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../00-foundations/01-math-essentials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 0.1 — Linear Algebra &amp; Calculus You Actually Need
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../00-foundations/02-probability-mle-map/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 0.2 — Probability, MLE and MAP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../00-foundations/03-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 0.3 — Optimization: GD, SGD, Momentum, Adam/AdamW
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../00-foundations/04-bias-variance-regularization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 0.4 — Bias–Variance, Regularization, Generalization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../00-foundations/05-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 0.5 — Evaluation: Metrics, CV, Leakage, Calibration, Thresholds
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../00-foundations/06-feature-engineering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 0.6 — Feature Engineering &amp; Preprocessing Pipelines
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    1 Regression
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    1 Regression
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-regression/01-linear-regression/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 1.1 — Linear Regression (Ordinary Least Squares)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-regression/02-polynomial-regression/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 1.2 — Polynomial Regression &amp; Basis Expansion
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-regression/03-ridge-lasso-elasticnet/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 1.3 — Ridge, Lasso and Elastic Net
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../01-regression/04-quantile-bayesian-regression/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 1.4 — Quantile, Robust and Bayesian Regression
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    2 Classification
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    2 Classification
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-classification/01-logistic-regression/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 2.1 — Logistic Regression
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-classification/02-perceptron/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 2.2 — The Perceptron
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-classification/03-naive-bayes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 2.3 — Naive Bayes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-classification/04-lda-qda/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 2.4 — Linear &amp; Quadratic Discriminant Analysis (LDA / QDA)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-classification/05-knn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 2.5 — k-Nearest Neighbors &amp; Nearest Centroid
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../02-classification/06-svm/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 2.6 — Support Vector Machines (Linear, Kernel, SVR)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    3 Trees and ensembles
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    3 Trees and ensembles
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-trees-and-ensembles/01-decision-trees/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 3.1 — Decision Trees (ID3 → C4.5 → CART) and Pruning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-trees-and-ensembles/02-bagging-random-forest/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 3.2 — Bagging, Random Forest, Extra Trees
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-trees-and-ensembles/03-adaboost-gradient-boosting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 3.3 — AdaBoost and Gradient Boosting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-trees-and-ensembles/04-xgboost-lightgbm-catboost/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 3.4 — XGBoost, LightGBM, CatBoost and HistGradientBoosting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../03-trees-and-ensembles/05-gmm-hmm-bayesnet/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 3.5 — Probabilistic Models: Gaussian Mixtures, Hidden Markov Models, Bayesian Networks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4 Unsupervised
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    4 Unsupervised
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-unsupervised-learning/01-kmeans/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 4.1 — K-Means and K-Medoids
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-unsupervised-learning/02-other-clustering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 4.2 — Hierarchical, DBSCAN, HDBSCAN, OPTICS, Mean Shift, Spectral Clustering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-unsupervised-learning/03-pca-family/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 4.3 — PCA, SVD, Kernel PCA, ICA, NMF
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-unsupervised-learning/04-tsne-umap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 4.4 — t-SNE and UMAP (Nonlinear Embeddings for Visualization)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-unsupervised-learning/05-anomaly-detection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 4.5 — Anomaly Detection: Isolation Forest, LOF, One-Class SVM, Robust Covariance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-unsupervised-learning/06-association-rules/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 4.6 — Association Rules: Apriori, FP-Growth, Eclat
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../04-unsupervised-learning/07-feature-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 4.7 — Feature Selection: Filter, Wrapper, Embedded
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    5 Deep learning
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    5 Deep learning
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-deep-learning/01-mlp-backprop/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 5.1 — Neural Networks: Perceptron → MLP → Backpropagation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-deep-learning/02-cnn-lineage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 5.2 — Convolutional Networks: LeNet → AlexNet → VGG → Inception → ResNet → EfficientNet → Vision Transformers
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-deep-learning/03-sequence-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 5.3 — Sequence Models: RNN → LSTM/GRU → TCN → Seq2Seq
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-deep-learning/04-attention-transformers/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 5.4 — Attention and Transformers (BERT, GPT-style decoders, Encoder–Decoder)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-deep-learning/05-generative-ae-vae-gan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 5.5 — Generative Models: Autoencoders, VAE, GAN (and a pointer to Diffusion)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-deep-learning/06-gnn/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 5.6 — Graph Neural Networks: GCN, GraphSAGE, GAT, Message Passing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../05-deep-learning/07-self-supervised/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 5.7 — Self-Supervised and Representation Learning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    6 Specialized ML
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    6 Specialized ML
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-specialized-ml/01-time-series/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6.1 — Time-Series Forecasting: Baselines, ETS, ARIMA/SARIMA, State Space, Boosting, Deep Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-specialized-ml/02-recommender-systems/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6.2 — Recommender Systems: Popularity → CF → Matrix Factorization → Two-Tower → Ranking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-specialized-ml/03-reinforcement-learning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6.3 — Reinforcement Learning: Bandits → DP → MC/TD → Q-Learning/SARSA → DQN → Policy Gradients → PPO/SAC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-specialized-ml/04-causal-inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6.4 — Causal Inference: Potential Outcomes, Propensity Scores, IPW, Matching, DiD, Causal Forests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-specialized-ml/05-survival-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6.5 — Survival Analysis: Kaplan–Meier, Cox Proportional Hazards, Parametric &amp; ML Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../06-specialized-ml/06-semi-weak-supervised/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6.6 — Semi-Supervised Learning and Weak Supervision
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../07-comparisons/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    7 Comparisons
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../08-projects/01-end-to-end-tabular-project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    8 Projects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    9 NLP
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_13" id="__nav_13_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    9 NLP
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01-text-preprocessing-tokenization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter N.1 — Text Preprocessing and Tokenization
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-text-representation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter N.2 — Text Representation: Bag-of-Words, TF-IDF, n-grams, Hashing, LSA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-text-classification-sentiment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter N.3 — Text Classification and Sentiment Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-language-models-ngram/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter N.4 — Statistical Language Models: n-grams, Smoothing, Perplexity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-word-embeddings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter N.5 — Word Embeddings: Co-occurrence, word2vec, GloVe, fastText
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-topic-modeling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter N.6 — Topic Modeling: LSA, NMF, LDA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter N.7 — Sequence Labeling: POS Tagging, NER, Chunking (HMM → CRF → Neural), plus Parsing &amp; Information Extraction
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter N.7 — Sequence Labeling: POS Tagging, NER, Chunking (HMM → CRF → Neural), plus Parsing &amp; Information Extraction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-identity-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Identity &amp; problem
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-lineage-and-what-each-step-fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Lineage (and what each step fixed)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-mathematics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Mathematics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-executed-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Executed results
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Executed results">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pos-tagging-nltk-penn-treebank-sample-universal-tagset-12-tags-3131-training-783-test-sentences-20039-test-tokens-85-of-test-tokens-are-unseen-in-training" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POS tagging — NLTK Penn Treebank sample, universal tagset (12 tags); 3,131 training / 783 test sentences, 20,039 test tokens; 8.5% of test tokens are unseen in training
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-beyond-tagging-parsing-and-information-extraction-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Beyond tagging: parsing and information extraction (overview)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-when-to-use-not" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. When to use / not
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-hyperparameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Hyperparameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-implementation-executed-code-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Implementation (executed code pattern)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-evaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Evaluation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-pitfalls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Pitfalls
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interview-qa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interview Q&amp;A
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercises
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further reading
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-pretrained-transformers-for-nlp/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter N.8 — Contextual Embeddings and Pretrained Transformers for NLP (ELMo → BERT family → sentence embeddings)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-seq2seq-mt-summarization-qa/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter N.9 — Sequence-to-Sequence NLP: Machine Translation, Summarization, Question Answering and Generation Metrics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-nlp-evaluation-practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter N.10 — NLP Evaluation, Multilingual Issues and Production Practice
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../10-genai-and-llms/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    10 GenAI and LLMs
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_14" id="__nav_14_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    10 GenAI and LLMs
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-genai-and-llms/01-generative-vs-discriminative/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6.1 — Generative vs. Discriminative Modeling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-genai-and-llms/02-language-models-llms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6.2 — Language Models → Large Language Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-genai-and-llms/03-prompt-engineering/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6.3 — Prompt Engineering
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-genai-and-llms/04-rag/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6.4 — Retrieval-Augmented Generation (RAG)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-genai-and-llms/05-efficient-adaptation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6.5 — Efficient Adaptation: Fine-Tuning, LoRA/QLoRA, Distillation, Quantization, Efficient Inference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-genai-and-llms/06-alignment-rlhf-dpo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6.6 — Alignment: Instruction Tuning, RLHF, DPO, AI Feedback
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-genai-and-llms/07-diffusion-models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6.7 — Diffusion Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-genai-and-llms/08-multimodal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6.8 — Multimodal Models (Vision-Language, Audio, Video)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-genai-and-llms/09-tool-calling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6.9 — Tool Calling (Function Calling)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-genai-and-llms/10-agents-agentic-ai/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6.10 — Agents and Agentic AI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../10-genai-and-llms/11-evaluation-safety-llmops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chapter 6.11 — Evaluation, Safety and LLMOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-identity-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Identity &amp; problem
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-lineage-and-what-each-step-fixed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Lineage (and what each step fixed)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-mathematics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Mathematics
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-executed-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Executed results
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Executed results">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pos-tagging-nltk-penn-treebank-sample-universal-tagset-12-tags-3131-training-783-test-sentences-20039-test-tokens-85-of-test-tokens-are-unseen-in-training" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POS tagging — NLTK Penn Treebank sample, universal tagset (12 tags); 3,131 training / 783 test sentences, 20,039 test tokens; 8.5% of test tokens are unseen in training
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-beyond-tagging-parsing-and-information-extraction-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Beyond tagging: parsing and information extraction (overview)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-when-to-use-not" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. When to use / not
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-hyperparameters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Hyperparameters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-implementation-executed-code-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Implementation (executed code pattern)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-evaluation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Evaluation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-pitfalls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Pitfalls
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interview-qa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interview Q&amp;A
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exercises" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exercises
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further reading
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="chapter-n7-sequence-labeling-pos-tagging-ner-chunking-hmm-crf-neural-plus-parsing-information-extraction">Chapter N.7 — Sequence Labeling: POS Tagging, NER, Chunking (HMM → CRF → Neural), plus Parsing &amp; Information Extraction<a class="headerlink" href="#chapter-n7-sequence-labeling-pos-tagging-ner-chunking-hmm-crf-neural-plus-parsing-information-extraction" title="Permanent link">&para;</a></h1>
+<p><a href="../">← NLP index</a> · Prev <a href="../06-topic-modeling/">N.6</a> · Next <a href="../08-pretrained-transformers-for-nlp/">N.8 Pretrained transformers</a> · Priority 🟠 · Code: <a href="../../code/nlp_sequence_labeling.py"><code>nlp_sequence_labeling.py</code></a> (executed), <a href="../../code/probabilistic_models.py"><code>probabilistic_models.py</code></a> (HMM forward/Viterbi)</p>
+<h2 id="1-identity-problem">1. Identity &amp; problem<a class="headerlink" href="#1-identity-problem" title="Permanent link">&para;</a></h2>
+<p>Assign a label to <strong>every token</strong> in a sequence, where neighboring labels depend on each other. Tasks: <strong>POS tagging</strong> (NOUN, VERB…), <strong>named-entity recognition</strong> (PER/ORG/LOC), chunking (NP/VP), slot filling in dialogue, keyphrase extraction, medical/legal entity extraction, token-level toxicity/PII detection.</p>
+<h2 id="2-lineage-and-what-each-step-fixed">2. Lineage (and what each step fixed)<a class="headerlink" href="#2-lineage-and-what-each-step-fixed" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Era</th>
+<th>Model</th>
+<th>Fixes</th>
+<th>Limit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1960s–90s</td>
+<td>Rule/lexicon taggers (Brill 1992 transformation-based)</td>
+<td>Interpretable</td>
+<td>Manual rules</td>
+</tr>
+<tr>
+<td>1990s</td>
+<td><strong>HMM</strong> (Church 1988; Brants TnT 2000)</td>
+<td>Probabilistic, Viterbi decoding</td>
+<td>Generative, local features only, poor OOV</td>
+</tr>
+<tr>
+<td>1996–2000</td>
+<td>Maximum-entropy / MEMM (Ratnaparkhi 1996)</td>
+<td>Rich overlapping features</td>
+<td><strong>Label bias</strong></td>
+</tr>
+<tr>
+<td>2001</td>
+<td><strong>CRF</strong> (Lafferty, McCallum &amp; Pereira)</td>
+<td>Globally normalized, no label bias, arbitrary features</td>
+<td>Feature engineering</td>
+</tr>
+<tr>
+<td>2008–2015</td>
+<td>Neural taggers: Collobert &amp; Weston (2011), <strong>BiLSTM-CRF</strong> (Huang et al. 2015; Lample et al. 2016) with char-CNN/LSTM</td>
+<td>Learn features, OOV via characters</td>
+<td>Needs data; slow vs linear</td>
+</tr>
+<tr>
+<td>2018+</td>
+<td><strong>Pretrained transformers</strong> with token-classification heads (BERT, RoBERTa, XLM-R)</td>
+<td>Context, transfer, multilingual</td>
+<td>Compute; subword↔word alignment</td>
+</tr>
+<tr>
+<td>2020+</td>
+<td>LLM prompting/few-shot extraction, span/generative IE (UIE-style)</td>
+<td>No labels, flexible schemas</td>
+<td>Cost, consistency</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-mathematics">3. Mathematics<a class="headerlink" href="#3-mathematics" title="Permanent link">&para;</a></h2>
+<p><strong>HMM tagger:</strong> <code>argmax_t Π P(t_i|t_{i−1}) P(w_i|t_i)</code>, decoded by <strong>Viterbi</strong> DP in <code>O(nT²)</code>; parameters by counting with smoothing; OOV words need a suffix/shape model.
+<strong>CRF (linear-chain):</strong> <code>P(y|x) = (1/Z(x)) exp Σ_i [Σ_k λ_k f_k(y_{i−1},y_i,x,i)]</code>, <code>Z(x)</code> computed by the forward algorithm; trained by maximizing regularized conditional log-likelihood (L-BFGS); features: word identity, suffixes/prefixes, capitalization, neighbors, gazetteers, POS tags. Global normalization lets the model learn that <code>I-PER</code> cannot follow <code>B-ORG</code>.
+<strong>BIO tagging:</strong> <code>B-X</code> begin, <code>I-X</code> inside, <code>O</code> outside: <code>Angela(B-PER) Merkel(I-PER) visited(O) Berlin(B-LOC)</code>. <strong>Entity-level evaluation</strong> counts an entity correct only if its span <em>and</em> type match exactly.
+<strong>Worked Viterbi example</strong> (weather HMM from Ch 3.5): observations walk, shop, clean → best hidden path Sunny → Rainy → Rainy, probability 0.01344 (executed and verified by brute force over all 8 paths). POS tagging is the same algorithm with tags as hidden states and words as observations.
+<strong>Neural taggers:</strong> contextual encoder → per-token softmax (or CRF layer over BiLSTM/transformer outputs). With wordpiece tokenization, label the first subword of each word and ignore the rest in the loss.</p>
+<h2 id="4-executed-results">4. Executed results<a class="headerlink" href="#4-executed-results" title="Permanent link">&para;</a></h2>
+<h3 id="pos-tagging-nltk-penn-treebank-sample-universal-tagset-12-tags-3131-training-783-test-sentences-20039-test-tokens-85-of-test-tokens-are-unseen-in-training">POS tagging — NLTK Penn Treebank sample, universal tagset (12 tags); 3,131 training / 783 test sentences, 20,039 test tokens; 8.5% of test tokens are unseen in training<a class="headerlink" href="#pos-tagging-nltk-penn-treebank-sample-universal-tagset-12-tags-3131-training-783-test-sentences-20039-test-tokens-85-of-test-tokens-are-unseen-in-training" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Overall accuracy</th>
+<th>Accuracy on OOV tokens (1,706)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Most-frequent-tag baseline (unknown → most common tag)</td>
+<td>0.9297</td>
+<td>0.564</td>
+</tr>
+<tr>
+<td>HMM (bigram tag transitions) + Viterbi + suffix model for unknowns</td>
+<td>0.9434</td>
+<td>0.725</td>
+</tr>
+<tr>
+<td><strong>CRF</strong> (word/suffix/prefix/capitalization/digit/neighbor features)</td>
+<td><strong>0.9705</strong></td>
+<td><strong>0.883</strong></td>
+</tr>
+<tr>
+<td>Reading: the simple baseline is already 93% (ambiguity is limited with a coarse 12-tag set) — so always report it. Gains concentrate on <strong>OOV words</strong> (0.56 → 0.88) where features such as suffixes and capitalization matter; the CRF removes ~57% of the baseline's errors. A pretrained transformer reaches ~97–98% on the full Penn Treebank with the fine tagset; I did not run one here.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>### NER — CoNLL-2002 Spanish (8,323 train / 1,517 test sentences), CRF with word, suffix, shape, POS and neighbor features</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Entity-level micro <strong>precision 0.793 · recall 0.781 · F1 0.787</strong>; token accuracy 0.9709 — misleading, because 88.0% of tokens are <code>O</code> (always predicting <code>O</code> gets 0.880 accuracy and entity F1 = 0).</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Entity</td>
+<td>Precision</td>
+<td>Recall</td>
+</tr>
+<tr>
+<td>---</td>
+<td>---</td>
+<td>---</td>
+</tr>
+<tr>
+<td>PER</td>
+<td>0.842</td>
+<td>0.878</td>
+</tr>
+<tr>
+<td>ORG</td>
+<td>0.780</td>
+<td>0.806</td>
+</tr>
+<tr>
+<td>LOC</td>
+<td>0.805</td>
+<td>0.772</td>
+</tr>
+<tr>
+<td>MISC</td>
+<td>0.664</td>
+<td>0.494</td>
+</tr>
+<tr>
+<td>Reading: MISC (heterogeneous category) is hardest; PER easiest (capitalized names). A BiLSTM-CRF or fine-tuned multilingual transformer typically improves these numbers substantially — run notebook <code>nlp_2_transformers.ipynb</code> §4 for a pretrained English NER demo; add your measured numbers below.</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Your results (notebook)</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pretrained <code>dslim/bert-base-NER</code> qualitative output on your sentences</td>
+<td><em>run notebook §4</em></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-beyond-tagging-parsing-and-information-extraction-overview">5. Beyond tagging: parsing and information extraction (overview)<a class="headerlink" href="#5-beyond-tagging-parsing-and-information-extraction-overview" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Dependency parsing:</strong> head-dependent arcs (transition-based: Nivre 2003; graph-based: McDonald et al. 2005; neural biaffine: Dozat &amp; Manning 2017). Evaluation: UAS/LAS. Used in relation extraction, grammar tools, linguistics; much less necessary for end-to-end neural pipelines.</li>
+<li><strong>Constituency parsing:</strong> CKY/PCFG → neural span parsers. <strong>Coreference resolution:</strong> link mentions to entities ("Marie … she"); neural end-to-end models (Lee et al. 2017).</li>
+<li><strong>Relation extraction &amp; event extraction:</strong> classify relations between entity pairs ("Curie — born_in — Warsaw"), distant supervision (Mintz 2009), pretrained encoders with entity markers; <strong>entity linking</strong> maps mentions to knowledge-base IDs.</li>
+<li><strong>Open IE</strong> extracts (subject, relation, object) triples without a fixed schema. Pipeline: tokenization → NER → entity linking → relation extraction → knowledge graph.</li>
+</ul>
+<h2 id="6-when-to-use-not">6. When to use / not<a class="headerlink" href="#6-when-to-use-not" title="Permanent link">&para;</a></h2>
+<p>CRF with good features: small labeled sets, fast CPU inference, interpretable, strong baseline — still used in production for well-defined entities. Transformers: when you have moderate labeled data or a pretrained domain model (BioBERT, LegalBERT). LLM prompting: few labels or evolving schemas, with validation. Regex/gazetteers/rules: high-precision patterns (IDs, emails, dates). Hybrid is common: rules for structured entities + model for the rest.</p>
+<h2 id="7-hyperparameters">7. Hyperparameters<a class="headerlink" href="#7-hyperparameters" title="Permanent link">&para;</a></h2>
+<p>CRF: <code>c1</code> (L1), <code>c2</code> (L2), features, <code>max_iterations</code>, algorithm. Neural: encoder size, char features, CRF layer, dropout, LR (2e-5–5e-5 for transformers), max length, label scheme (BIO vs BIOES), subword-label alignment policy.</p>
+<h2 id="8-implementation-executed-code-pattern">8. Implementation (executed code pattern)<a class="headerlink" href="#8-implementation-executed-code-pattern" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">sklearn_crfsuite</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">feats</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'bias'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">'w.lower'</span><span class="p">:</span> <span class="n">w</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="s1">'suf3'</span><span class="p">:</span> <span class="n">w</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:],</span> <span class="s1">'suf2'</span><span class="p">:</span> <span class="n">w</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span> <span class="s1">'istitle'</span><span class="p">:</span> <span class="n">w</span><span class="o">.</span><span class="n">istitle</span><span class="p">(),</span> <span class="s1">'isupper'</span><span class="p">:</span> <span class="n">w</span><span class="o">.</span><span class="n">isupper</span><span class="p">(),</span> <span class="s1">'isdigit'</span><span class="p">:</span> <span class="n">w</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()}</span>
+    <span class="k">if</span> <span class="n">i</span><span class="p">:</span> <span class="n">f</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">'-1:w'</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="s1">'-1:title'</span><span class="p">:</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">istitle</span><span class="p">()})</span>
+    <span class="k">else</span><span class="p">:</span> <span class="n">f</span><span class="p">[</span><span class="s1">'BOS'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="n">f</span><span class="p">[</span><span class="s1">'+1:w'</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span> <span class="n">f</span><span class="p">[</span><span class="s1">'EOS'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">f</span>
+<span class="n">crf</span> <span class="o">=</span> <span class="n">sklearn_crfsuite</span><span class="o">.</span><span class="n">CRF</span><span class="p">(</span><span class="n">algorithm</span><span class="o">=</span><span class="s1">'lbfgs'</span><span class="p">,</span> <span class="n">c1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">c2</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">all_possible_transitions</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">crf</span><span class="o">.</span><span class="n">fit</span><span class="p">([[</span><span class="n">feats</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">))]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">train</span><span class="p">],</span> <span class="n">train_labels</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">seqeval.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">classification_report</span><span class="p">;</span> <span class="nb">print</span><span class="p">(</span><span class="n">classification_report</span><span class="p">(</span><span class="n">gold</span><span class="p">,</span> <span class="n">crf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)))</span>
+</code></pre></div>
+<h2 id="9-evaluation">9. Evaluation<a class="headerlink" href="#9-evaluation" title="Permanent link">&para;</a></h2>
+<p>Token accuracy (POS), <strong>entity-level precision/recall/F1</strong> (strict span+type; also report partial-match/relaxed variants), per-type metrics, confusion between types, error taxonomy (boundary errors, type errors, missed, spurious), out-of-domain test (news-trained NER collapses on tweets/clinical text), annotation consistency (inter-annotator F1 sets a ceiling). Use <code>seqeval</code>.</p>
+<h2 id="10-pitfalls">10. Pitfalls<a class="headerlink" href="#10-pitfalls" title="Permanent link">&para;</a></h2>
+<p>Evaluating NER with token accuracy · leaking test sentences via document-level duplicates · inconsistent tag schemes (BIO vs IOB1) between data and evaluator · subword–word alignment mistakes · domain shift · nested/overlapping entities (flat taggers can't represent them) · annotation guideline drift.</p>
+<h2 id="interview-qa">Interview Q&amp;A<a class="headerlink" href="#interview-qa" title="Permanent link">&para;</a></h2>
+<ul>
+<li><em>HMM vs CRF?</em> Generative with local independence vs discriminative, globally normalized, arbitrary overlapping features.</li>
+<li><em>Why Viterbi?</em> Dynamic programming finds the best tag sequence in <code>O(nT²)</code> instead of <code>T^n</code>.</li>
+<li><em>What is label bias?</em> Locally normalized models (MEMM) prefer states with few outgoing transitions; CRFs avoid it with global normalization.</li>
+<li><em>Why not token accuracy for NER?</em> <code>O</code> dominates; use entity-level F1.</li>
+<li><em>BIO vs BIOES?</em> BIOES adds explicit end/single tags, sometimes small gains.</li>
+</ul>
+<h2 id="exercises">Exercises<a class="headerlink" href="#exercises" title="Permanent link">&para;</a></h2>
+<p>Add gazetteer and cluster features to the CRF and measure F1; implement Viterbi for a tagger from scratch and verify against brute force; compute strict vs relaxed entity F1; fine-tune a transformer for NER on the same data (notebook extension).</p>
+<h2 id="further-reading">Further reading<a class="headerlink" href="#further-reading" title="Permanent link">&para;</a></h2>
+<p>Lafferty, McCallum &amp; Pereira (2001); Jurafsky &amp; Martin Ch 8 (Sequence labeling); Huang, Xu &amp; Yu (2015); Lample et al. (2016); Devlin et al. (2018) NER results; Tjong Kim Sang (2002) CoNLL-2002; Sutton &amp; McCallum (2012) <em>An Introduction to Conditional Random Fields</em>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.top", "navigation.indexes", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
